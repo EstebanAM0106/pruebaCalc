@@ -2,29 +2,119 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calculadora Rust Wasm</title>
+    <style>
+      :root {
+        --primary: #5d5cde;
+        --primary-hover: #4a49b8;
+        --bg: #f0f2f5;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      h2 {
+        color: #333;
+        margin-bottom: 1.5rem;
+      }
+
+      .input-group {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+      }
+
+      input,
+      select {
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        width: 80px;
+        outline: none;
+        transition: border-color 0.3s;
+      }
+
+      input:focus {
+        border-color: var(--primary);
+      }
+
+      button {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 1.5rem;
+        transition: background 0.3s;
+      }
+
+      button:hover {
+        background-color: var(--primary-hover);
+      }
+
+      #res {
+        margin-top: 1.5rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--primary);
+      }
+    </style>
   </head>
   <body>
-    <input type="number" id="num1" />
-    <select id="op">
-      <option value="add">+</option>
-      <option value="sub">-</option>
-      <option value="mul">*</option>
-      <option value="div">/</option>
-    </select>
-    <input type="number" id="num2" />
-    <button id="btn">Calcular</button>
-    <div id="res"></div>
+    <div class="card">
+      <h2>Calculadora Rust</h2>
+      <div class="input-group">
+        <input type="number" id="num1" placeholder="0" />
+        <select id="op">
+          <option value="add">+</option>
+          <option value="sub">-</option>
+          <option value="mul">*</option>
+          <option value="div">/</option>
+        </select>
+        <input type="number" id="num2" placeholder="0" />
+      </div>
+      <button id="btn">Calcular</button>
+      <div id="res">Resultado: -</div>
+    </div>
 
     <script type="module">
       import init, { calcular } from "./pkg/calculadora_wasm.js";
+
       await init();
-      document.getElementById("btn").onclick = () => {
-        const r = calcular(
-          parseFloat(document.getElementById("num1").value),
-          parseFloat(document.getElementById("num2").value),
-          document.getElementById("op").value,
-        );
+
+      const btn = document.getElementById("btn");
+      btn.onclick = () => {
+        const n1 = parseFloat(document.getElementById("num1").value);
+        const n2 = parseFloat(document.getElementById("num2").value);
+        const op = document.getElementById("op").value;
+
+        if (isNaN(n1) || isNaN(n2)) {
+          document.getElementById("res").innerText = "Ingresa números válidos";
+          return;
+        }
+
+        const r = calcular(n1, n2, op);
         document.getElementById("res").innerText = "Resultado: " + r;
       };
     </script>
